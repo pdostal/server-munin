@@ -1,0 +1,19 @@
+- name: Munin
+  hosts: all
+  sudo: true
+  handlers:
+  - name: restart munin-node
+    service: name=munin-node state=restarted
+  tasks:
+  - name: Install munin
+    apt: name={{ item }} state=latest
+    with_items:
+    - munin
+    - munin-node
+    - munin-plugins-core
+    - munin-plugins-extra
+  - name: Put munin conf
+    template: >
+      src=templates/munin.conf
+      dest=/etc/munin/munin.conf
+    notify: restart munin-node
